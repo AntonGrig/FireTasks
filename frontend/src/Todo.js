@@ -1,4 +1,14 @@
 import React from 'react';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 
 export class TodoList extends React.Component {
     constructor() {
@@ -10,7 +20,7 @@ export class TodoList extends React.Component {
         }
     }
 
-    getAllTodos() {
+    componentDidMount() {
         fetch('http://localhost:3000/get-todo-list')
             .then(res => res.json())
             .then(res => {
@@ -71,29 +81,38 @@ export class TodoList extends React.Component {
     render() {
         return (
             <div>
-                <input type="text" value={this.state.temp} onChange={this.textLine} />
-                <button onClick={this.addNewTask}>Add task</button>
-                <table>
-                    <tbody>
-                        <tr>
-                            <th>Id</th>
-                            <th>Name</th>
-                            <th>Button</th>
-                        </tr>
-                        {this.state.tasks.map((task, idx) => (
-                            <tr key={idx}>
-                                <td>{task.id}</td>
-                                <td>{task.name}</td>
-                                <td>
-                                    <button onClick={() => this.deleteButton(task.id)}>Delete</button>
-                                    <button onClick={() => this.renameTask(task.id)}>Rename</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <form>
+                    <TextField id="outlined-basic" label="Outlined" variant="outlined" value={this.state.temp} onChange={this.textLine} />
+                    <Button variant="contained" color="primary" onClick={this.addNewTask}>Add task</Button>
+                </form>
+                <TableContainer component={Paper}>
+                    <Table aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>ID</TableCell>
+                                <TableCell align="right">NAME</TableCell>
+                                <TableCell align="right">BUTTON</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {this.state.tasks.map((task, idx) => (
+                                <TableRow key={idx}>
+                                    <TableCell component="th" scope="row">
+                                        {task.id}
+                                    </TableCell>
+                                    <TableCell align="right">{task.name}</TableCell>
+                                    <TableCell align="right">
+                                        <ButtonGroup color="primary" aria-label="outlined primary button group">
+                                            <Button color="secondary" variant="contained" onClick={() => this.deleteButton(task.id)}>Delete</Button>
+                                            <Button color="primary" variant="contained" onClick={() => this.renameTask(task.id)}>Rename</Button> 
+                                        </ButtonGroup>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
             </div>
-
         )
     }
 }
