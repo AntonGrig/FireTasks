@@ -21,10 +21,10 @@ export class TodoList extends React.Component {
     }
 
     componentDidMount() {
-        fetch('http://localhost:3000/get-todo-list')
+        fetch('http://localhost:3000/tasks/get-todo-list')
             .then(res => res.json())
             .then(res => {
-                this.setState({ tasks: res.todo });
+                this.setState({ tasks: res });
             });
     }
 
@@ -34,7 +34,7 @@ export class TodoList extends React.Component {
 
     addNewTask = () => {
         const temporaryTask = this.state.temp;
-        fetch('http://localhost:3000/add-todo', {
+        fetch('http://localhost:3000/tasks/add-todo', {
             method: 'post',
             body: JSON.stringify({ "name": temporaryTask }),
             headers: { 'Content-Type': 'application/json' }
@@ -50,9 +50,9 @@ export class TodoList extends React.Component {
     renameTask = (id) => {
         // TODO: implement udpate of the data
         const answer = prompt("What is the new task?");
-        fetch('http://localhost:3000/update-todo', {
-            method: 'post',
-            body: JSON.stringify({ id, name: answer }),
+        fetch(`http://localhost:3000/tasks/update-todo/${id}`, {
+            method: 'put',
+            body: JSON.stringify({ name: answer }),
             headers: { 'Content-Type': 'application/json' }
         })
             .then(res => res.json())
@@ -64,14 +64,9 @@ export class TodoList extends React.Component {
     };
 
     deleteButton = (id) => {
-        // TODO: implement removal of the data
-        fetch('http://localhost:3000/delete-todo', {
-            method: 'post',
-            body: JSON.stringify({ id }),
-            headers: { 'Content-Type': 'application/json' }
-        })
+        fetch(`http://localhost:3000/tasks/delete-todo/${id}`, { method: 'delete' })
             .then(resp => resp.json())
-            .then(resp => {
+            .then(() => {
                 const updatedTasks = this.state.tasks.filter((task) => task.id !== id);
                 this.setState({ tasks: updatedTasks });
                 console.log('Object updated!');
@@ -90,8 +85,8 @@ export class TodoList extends React.Component {
                         <TableHead>
                             <TableRow>
                                 <TableCell>ID</TableCell>
-                                <TableCell align="right">NAME</TableCell>
-                                <TableCell align="right">BUTTON</TableCell>
+                                <TableCell>NAME</TableCell>
+                                <TableCell align="right">ACTIONS</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -100,11 +95,11 @@ export class TodoList extends React.Component {
                                     <TableCell component="th" scope="row">
                                         {task.id}
                                     </TableCell>
-                                    <TableCell align="right">{task.name}</TableCell>
+                                    <TableCell>{task.name}</TableCell>
                                     <TableCell align="right">
                                         <ButtonGroup color="primary" aria-label="outlined primary button group">
-                                            <Button color="secondary" variant="contained" onClick={() => this.deleteButton(task.id)}>Delete</Button>
                                             <Button color="primary" variant="contained" onClick={() => this.renameTask(task.id)}>Rename</Button> 
+                                            <Button color="secondary" variant="contained" onClick={() => this.deleteButton(task.id)}>Delete</Button>
                                         </ButtonGroup>
                                     </TableCell>
                                 </TableRow>

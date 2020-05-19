@@ -3,7 +3,7 @@ const Router = require('express-promise-router')
 const router = new Router();
 
 router.get('/get-todo-list', async (_req, res) => {
-  const { rows } = await db.query('SELECT id, name FROM tasks');
+  const { rows } = await db.query('SELECT id, name FROM tasks ORDER BY id');
   res.json(rows);
 })
 
@@ -25,7 +25,7 @@ router.post('/add-todo', async (req, res) => {
   }
 
   const { rows } = await db.query('INSERT INTO tasks (name) VALUES ($1) RETURNING id', [name]);
-  res.json({ message: `Successfully added an item with ID ${rows[0].id}`});
+  res.json({ message: `Successfully added an item with ID ${rows[0].id}`, newId: rows[0].id });
 
   // Transactional Way:
   /*
@@ -47,7 +47,7 @@ router.delete('/delete-todo/:id', async (req, res) => {
   console.log(`deleting with id`, id);
   
   await db.query('DELETE FROM tasks WHERE id = $1', [id]);
-  res.json({ message: `Successfully deleted an item with ID ${id}`});
+  res.json({ message: `Successfully deleted an item with ID ${id}` });
 });
 
 // Add update-todo
@@ -62,7 +62,7 @@ router.put('/update-todo/:id', async (req, res) => {
   }
 
   await db.query('UPDATE tasks SET name = $1 WHERE id = $2', [name, id]);
-  res.json({ message: `Successfully updated an item with ID ${id} and new name ${name}`});
+  res.json({ message: `Successfully updated an item with ID ${id} and new name ${name}` });
 });
 
 module.exports = router;
