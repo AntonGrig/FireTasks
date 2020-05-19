@@ -1,5 +1,5 @@
-const express = require('express');
-const router = express.Router();
+const Router = require('express-promise-router')
+const router = new Router();
 const fs = require('fs');
 
 function readFromDatabase() {
@@ -22,7 +22,7 @@ router.get('/', function (_req, res) {
 router.get('/get-todo-list', (_req, res) => {
   const database = readFromDatabase();
   res.json(database);
-})
+});
 
 // Add new task
 router.post('/add-todo', (req, res) => {
