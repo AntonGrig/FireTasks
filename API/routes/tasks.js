@@ -43,8 +43,6 @@ router.delete('/delete-todo/:id', async (req, res) => {
   if (isNaN(id)) {
     res.json({ error: "No id specified" });
   }
-
-  console.log(`deleting with id`, id);
   
   await db.query('DELETE FROM tasks WHERE id = $1', [id]);
   res.json({ message: `Successfully deleted an item with ID ${id}` });
