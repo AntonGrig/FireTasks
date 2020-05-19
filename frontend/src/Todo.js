@@ -10,6 +10,8 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 
+import { backendUrl } from './config';
+
 export class TodoList extends React.Component {
     constructor() {
         super();
@@ -21,7 +23,8 @@ export class TodoList extends React.Component {
     }
 
     componentDidMount() {
-        fetch('http://localhost:3000/tasks/get-todo-list')
+        console.log(process.env.REACT_APP_BACKEND);
+        fetch(`${backendUrl}/tasks/get-todo-list`)
             .then(res => res.json())
             .then(res => {
                 this.setState({ tasks: res });
@@ -34,7 +37,7 @@ export class TodoList extends React.Component {
 
     addNewTask = () => {
         const temporaryTask = this.state.temp;
-        fetch('http://localhost:3000/tasks/add-todo', {
+        fetch(`${backendUrl}/tasks/add-todo`, {
             method: 'post',
             body: JSON.stringify({ "name": temporaryTask }),
             headers: { 'Content-Type': 'application/json' }
@@ -50,7 +53,7 @@ export class TodoList extends React.Component {
     renameTask = (id) => {
         // TODO: implement udpate of the data
         const answer = prompt("What is the new task?");
-        fetch(`http://localhost:3000/tasks/update-todo/${id}`, {
+        fetch(`${backendUrl}/tasks/update-todo/${id}`, {
             method: 'put',
             body: JSON.stringify({ name: answer }),
             headers: { 'Content-Type': 'application/json' }
@@ -64,7 +67,7 @@ export class TodoList extends React.Component {
     };
 
     deleteButton = (id) => {
-        fetch(`http://localhost:3000/tasks/delete-todo/${id}`, { method: 'delete' })
+        fetch(`${backendUrl}/tasks/delete-todo/${id}`, { method: 'delete' })
             .then(resp => resp.json())
             .then(() => {
                 const updatedTasks = this.state.tasks.filter((task) => task.id !== id);
